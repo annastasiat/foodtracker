@@ -27,9 +27,6 @@ public class PageController {
     private UserFoodService userFoodService;
     @Autowired
     private FoodService foodService;
-    @Autowired
-    private LocaleConfiguration localeConfiguration;
-
 
     @GetMapping("/login")
     public String login(Model model) {
@@ -50,12 +47,6 @@ public class PageController {
 
         return "user/statistics.html";
     }
-
-    /*@RequestMapping("/registration")
-    public String registration(){
-        System.out.println("REG");
-        return "registration.html";
-    }*/
 
     @RequestMapping("/user")
     public String user() {

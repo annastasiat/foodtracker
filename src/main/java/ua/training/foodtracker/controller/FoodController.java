@@ -44,13 +44,6 @@ public class FoodController {
 
     @GetMapping
     public String home(Model model) {
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("AUTH OK");
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof UserDetailsImpl) {
-            System.out.println(((UserDetailsImpl) principal).getUsername());
-        }
         return "user/index.html";
     }
 
