@@ -29,7 +29,6 @@ public class FoodController {
 
     @Autowired
     private UserFoodService userFoodService;
-
     @Autowired
     private FoodService foodService;
 

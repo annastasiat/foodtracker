@@ -30,7 +30,8 @@ public class RegistrationController {
 
     @GetMapping
     public String showRegistrationForm(Model model) {
-        return "registration";
+
+        return "registration.html";
     }
 
     @PostMapping

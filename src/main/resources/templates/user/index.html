@@ -11,9 +11,12 @@
 <body>
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="#">Home</a></li>
-        <li class="breadcrumb-item"><a href="#">Statistics</a></li>
-        <li class="breadcrumb-item"><a href="/" th:href="@{/logout}">Log out</a></li>
+        <li class="breadcrumb-item"><a href="/" th:text="#{messages.menu.home}"></a></li>
+        <li class="breadcrumb-item"><a href="/account" th:text="#{messages.menu.account}"></a></li>
+        <li class="breadcrumb-item"><a href="/statistics" th:text="#{messages.menu.statistics}"></a></li>
+        <li class="breadcrumb-item"><a href="/" th:href="@{/logout}" th:text="#{messages.menu.logout}"></a></li>
+        <li class="breadcrumb-item"><a th:href="@{/?lang=en}">English</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/?lang=ua}">Українська</a></li>
     </ol>
 </nav>
 
@@ -23,19 +26,19 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
 
-            <h2 class="page-header">Enter consumed food</h2>
+            <h2 class="page-header" th:text="#{messages.title.food.consumed}"></h2>
 
 
-
-            <form th:action="@{/add_user_food}" th:object="${userFood}" method="post" style="margin-bottom: 30px" name="form" autocomplete="off">
+            <form th:action="@{/add_user_food}" th:object="${userFood}" method="post" style="margin-bottom: 30px"
+                  name="form" autocomplete="off">
 
 
                 <div th:if="${param.success}">
-                    <div class="alert alert-info"><p>Food added!</p></div>
+                    <div class="alert alert-info"><p th:text="#{messages.alert.food.added}"></p></div>
                 </div>
 
                 <div th:if="${param.error}">
-                    <div class="alert alert-danger"><p>No such food in db. Add your food to db via form below.</p>
+                    <div class="alert alert-danger"><p th:text="#{messages.error.no.such.food.in.db}"></p>
                     </div>
                 </div>
 
@@ -45,22 +48,21 @@
                     error</p>
 
                 <div class="form-group">
-                    <label for="food-name">Food name</label>
-                    <input class="form-control form-control-lg" id="food-name" type="text" placeholder="Large input"
-                           th:field="*{foodName}" >
+                    <label th:text="#{messages.enter.food.name}" for="food-name"></label>
+                    <input class="form-control form-control-lg" id="food-name" type="text" placeholder=""
+                           th:field="*{foodName}">
                 </div>
 
                 <div class="form-group">
-                    <label for="food-amount">Amount in grams</label>
-                    <input class="form-control form-control-lg" id="food-amount" type="text" placeholder="Large input"
+                    <label th:text="#{messages.enter.food.amount}" for="food-amount"></label>
+                    <input class="form-control form-control-lg" id="food-amount" type="text" placeholder=""
                            th:field="*{amount}">
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="margin-top:30px">
-                    Submit
+                <button type="submit" class="btn btn-primary" style="margin-top:30px"
+                        th:text="#{messages.button.submit}">
+
                 </button>
-
-
             </form>
 
         </div>
@@ -69,41 +71,43 @@
 
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
-            <h2 class="page-header">Add food to DataBase</h2>
-            <form  th:action="@{/add_food}" th:object="${food}" method="post" style="margin-bottom: 30px" name="form" autocomplete="off">
+            <h2 class="page-header" th:text="#{messages.title.food.to.db}"></h2>
+            <form th:action="@{/add_food}" th:object="${food}" method="post" style="margin-bottom: 30px" name="form"
+                  autocomplete="off">
 
                 <div class="form-group">
-                    <label for="new-food-name">Food name</label>
+                    <label for="new-food-name" th:text="#{messages.enter.food.name}"></label>
                     <input class="form-control form-control-lg" id="new-food-name" type="text"
                            placeholder="" th:field="*{name}">
                 </div>
 
                 <div class="form-group">
-                    <label for="carbs">Carbs</label>
+                    <label for="carbs" th:text="#{messages.enter.food.carbs}"></label>
                     <input class="form-control form-control-lg" id="carbs" type="text" placeholder=""
                            th:field="*{carbs}">
                 </div>
 
                 <div class="form-group">
-                    <label for="protein">Protein</label>
+                    <label for="protein" th:text="#{messages.enter.food.protein}"></label>
                     <input class="form-control form-control-lg" id="protein" type="text" placeholder=""
                            th:field="*{protein}">
                 </div>
 
                 <div class="form-group">
-                    <label for="fat">Fat</label>
+                    <label for="fat" th:text="#{messages.enter.food.fat}"></label>
                     <input class="form-control form-control-lg" id="fat" type="text" placeholder=""
                            th:field="*{fat}">
                 </div>
 
                 <div class="form-group">
-                    <label for="calories">Calories</label>
+                    <label for="calories" th:text="#{messages.enter.food.calories}"></label>
                     <input class="form-control form-control-lg" id="calories" type="text" placeholder=""
                            th:field="*{calories}">
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="margin-top:30px">
-                    Submit
+                <button th:text="#{messages.button.submit}" type="submit" class="btn btn-primary"
+                        style="margin-top:30px">
+
                 </button>
 
 
@@ -112,16 +116,7 @@
         </div>
     </div>
 
+</div>
 
-    <div class="card border-dark mb-3" style="max-width: 18rem;">
-        <div class="card-header">Header</div>
-        <div class="card-body text-dark">
-            <h5 class="card-title">Dark card title</h5>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-                content.</p>
-        </div>
-
-
-    </div>
 </body>
 </html>

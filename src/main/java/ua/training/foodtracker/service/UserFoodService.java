@@ -12,6 +12,7 @@ import ua.training.foodtracker.repository.UserFoodRepository;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class UserFoodService {
@@ -28,6 +29,7 @@ public class UserFoodService {
     @Transactional
     public UserFood save(UserFoodDTO userFoodDto){
         UserFood userFood = new UserFood();
+
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         userFood.setUsername(((UserDetailsImpl) principal).getUsername());
@@ -37,5 +39,11 @@ public class UserFoodService {
         userFood.setDate(Date.valueOf(LocalDate.now()));
 
         return userFoodRepository.save(userFood);
+    }
+
+    public List<UserFood> findAllTodays(){
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return userFoodRepository.findByUsernameAndDate(((UserDetailsImpl) principal).getUsername(), Date.valueOf(LocalDate.now()));
     }
 }
