@@ -43,41 +43,33 @@ public class FoodController {
     }
 
     @GetMapping
-    public String home(Model model) {
-        return "user/index.html";
+    public String home() {
+        return "user/index";
     }
 
     @PostMapping("add_user_food")
-    public String addUserFood(@ModelAttribute("userFood") @Valid UserFoodDTO userFoodDTO,
-                                      BindingResult result) {
+    public String addUserFood(@ModelAttribute("userFood") @Valid UserFoodDTO userFoodDTO) {
 
         Optional<Food> food = foodService.findByName(userFoodDTO.getFoodName());
-        if (!food.isPresent()) {
-            result.rejectValue("foodName", null, "There is no such food in db. Add new food to db via form below");
-        }
 
-        if (result.hasErrors()) {
-            return "user/index.html";
+        if (!food.isPresent()) {
+            return "redirect:/?add_error";
         }
 
         userFoodService.save(userFoodDTO);
-        return "redirect:/?success";
+        return "redirect:/?add_success";
     }
 
     @PostMapping("add_food")
-    public String addFood(@ModelAttribute("food") @Valid FoodDTO foodDTO,
-                                      BindingResult result) {
+    public String addFood(@ModelAttribute("food") @Valid FoodDTO foodDTO) {
 
         Optional<Food> food = foodService.findByName(foodDTO.getName());
-        if (food.isPresent()) {
-            result.rejectValue("name", null, "There is such food in db.");
-        }
 
-        if (result.hasErrors()) {
-            return "user/index.html";
+        if (food.isPresent()) {
+            return "redirect:/?add_db_error";
         }
 
         foodService.save(foodDTO);
-        return "redirect:/?success";
+        return "redirect:/?add_db_success";
     }
 }

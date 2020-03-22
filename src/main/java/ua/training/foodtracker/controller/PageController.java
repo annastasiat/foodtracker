@@ -17,44 +17,33 @@ import ua.training.foodtracker.entity.UserFood;
 import ua.training.foodtracker.service.FoodService;
 import ua.training.foodtracker.service.UserFoodService;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Controller
 public class PageController {
 
-    @Autowired
-    private UserFoodService userFoodService;
-    @Autowired
-    private FoodService foodService;
 
     @GetMapping("/login")
-    public String login(Model model) {
-        return "login.html";
+    public String login() {
+        return "login";
     }
 
     @RequestMapping("/account")
-    public String account(){
-        return "user/account.html";
+    public String account() {
+        return "user/account";
     }
 
-    @GetMapping(value = { "/statistics" })
-    public String personList(Model model) {
-
-        List<UserFood> todaysFood = userFoodService.findAllTodays();
-
-        model.addAttribute("todaysFood", todaysFood);
-
-        return "user/statistics.html";
-    }
 
     @RequestMapping("/user")
     public String user() {
-        return "user/index.html";
+        return "user/index";
     }
 
     @RequestMapping("/admin")
     public String admin() {
-        return "admin/index.html";
+        return "admin/index";
     }
 }

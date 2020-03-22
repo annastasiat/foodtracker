@@ -34,4 +34,19 @@ public class User {
 
     @Column(name = "first_name")
     private String  firstName;
+
+    @Column(name = "height", nullable = false)
+    private Integer height;
+
+    @Column(name = "weight", nullable = false)
+    private Integer weight;
+
+    @Column(name = "activity_level", nullable = false)
+    private Integer activityLevel;
+
+    @Column(name = "age", nullable = false)
+    private Integer age;
+
+    @Column(name = "first_name_ua", nullable = false)
+    private String firstNameUa;
 }

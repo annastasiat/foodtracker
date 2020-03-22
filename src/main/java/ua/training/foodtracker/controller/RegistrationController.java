@@ -29,9 +29,9 @@ public class RegistrationController {
     }
 
     @GetMapping
-    public String showRegistrationForm(Model model) {
+    public String showRegistrationForm() {
 
-        return "registration.html";
+        return "registration";
     }
 
     @PostMapping
@@ -40,11 +40,11 @@ public class RegistrationController {
 
         Optional<User> user = userService.findByUsername(userDto.getUsername());
         if (user.isPresent()){
-            result.rejectValue("username", null, "There is already an account registered with that email");
+            result.rejectValue("username", null, "There is already an account registered with that username");
         }
 
         if (result.hasErrors()){
-            return "registration";
+            return "redirect:/registration?error";
         }
 
         userService.save(userDto);

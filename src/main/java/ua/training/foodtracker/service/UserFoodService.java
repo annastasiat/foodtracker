@@ -12,6 +12,7 @@ import ua.training.foodtracker.repository.UserFoodRepository;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 @Service
@@ -27,7 +28,7 @@ public class UserFoodService {
     }*/
 
     @Transactional
-    public UserFood save(UserFoodDTO userFoodDto){
+    public UserFood save(UserFoodDTO userFoodDto) {
         UserFood userFood = new UserFood();
 
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -41,9 +42,25 @@ public class UserFoodService {
         return userFoodRepository.save(userFood);
     }
 
-    public List<UserFood> findAllTodays(){
+    public List<UserFood> findAllTodays() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         return userFoodRepository.findByUsernameAndDate(((UserDetailsImpl) principal).getUsername(), Date.valueOf(LocalDate.now()));
     }
+
+    public List<UserFood> findAll() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return userFoodRepository.findByUsername(((UserDetailsImpl) principal).getUsername());
+    }
+
+    public List<UserFood> findAllBetween(Date date1, Date date2) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return userFoodRepository.findByUsernameAndDateBetween(
+                ((UserDetailsImpl) principal).getUsername(), date1, date2);
+
+    }
+
+
 }

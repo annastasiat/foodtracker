@@ -28,6 +28,15 @@
 
             <h2 class="page-header" th:text="#{messages.title.food.consumed}"></h2>
 
+            <div th:if="${param.add_success}">
+                <div class="alert alert-info" th:text="#{messages.alert.food.added}"></div>
+            </div>
+
+            <div th:if="${param.add_error}">
+                <div class="alert alert-danger"><p th:text="#{messages.error.no.such.food.in.db}"></p>
+                </div>
+            </div>
+
 
             <form th:action="@{/add_user_food}" th:object="${userFood}" method="post" style="margin-bottom: 30px"
                   name="form" autocomplete="off">
@@ -41,11 +50,6 @@
                     <div class="alert alert-danger"><p th:text="#{messages.error.no.such.food.in.db}"></p>
                     </div>
                 </div>
-
-
-                <p class="error-message" th:if="${#fields.hasGlobalErrors()}"
-                   th:each="error : ${#fields.errors('global')}" th:text="${error}">Validation
-                    error</p>
 
                 <div class="form-group">
                     <label th:text="#{messages.enter.food.name}" for="food-name"></label>
@@ -72,6 +76,16 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <h2 class="page-header" th:text="#{messages.title.food.to.db}"></h2>
+
+            <div th:if="${param.add_db_success}">
+                <div class="alert alert-info" th:text="#{messages.alert.food.added}"></div>
+            </div>
+
+            <div th:if="${param.add_db_error}">
+                <div class="alert alert-danger"><p th:text="#{messages.error.such.food.in.db}"></p>
+                </div>
+            </div>
+
             <form th:action="@{/add_food}" th:object="${food}" method="post" style="margin-bottom: 30px" name="form"
                   autocomplete="off">
 
