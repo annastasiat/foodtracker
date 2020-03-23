@@ -1,8 +1,8 @@
 package ua.training.foodtracker.dto;
 
 import lombok.*;
+import ua.training.foodtracker.entity.User;
 
-import javax.persistence.Column;
 
 
 @Getter
@@ -14,11 +14,22 @@ import javax.persistence.Column;
 public class UserDTO {
 
     private String username;
-    private String password;
     private String firstName;
     private Integer height;
     private Integer weight;
     private Integer activityLevel;
     private Integer age;
     private String firstNameUa;
+
+    public UserDTO(User user){
+        this.username = user.getUsername();
+        this.height = user.getHeight();
+        this.weight = user.getWeight();
+        this.activityLevel = user.getActivityLevel();
+        this.age = user.getAge();
+        this.firstName = user.getFirstName();
+        this.firstNameUa = user.getFirstNameUa();
+    }
+
+
 }

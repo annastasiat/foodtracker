@@ -23,6 +23,11 @@
         <li class="breadcrumb-item"><a href="/account" th:text="#{messages.menu.account}"></a></li>
         <li class="breadcrumb-item"><a href="/statistics" th:text="#{messages.menu.statistics}"></a></li>
         <li class="breadcrumb-item"><a href="/" th:href="@{/logout}" th:text="#{messages.menu.logout}"></a></li>
+
+        <li class="breadcrumb-item" th:if="${isAdmin}">
+            <a href="/admin" th:text="#{messages.menu.admin}"></a>
+        </li>
+
         <li class="breadcrumb-item"><a th:href="@{/statistics?lang=en}">English</a></li>
         <li class="breadcrumb-item"><a th:href="@{/statistics?lang=ua}">Українська</a></li>
     </ol>

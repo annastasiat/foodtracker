@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import ua.training.foodtracker.dto.UserDTO;
+import ua.training.foodtracker.dto.UserRegDTO;
 import ua.training.foodtracker.entity.User;
 import ua.training.foodtracker.service.UserService;
 
@@ -24,8 +24,8 @@ public class RegistrationController {
     private UserService userService;
 
     @ModelAttribute("user")
-    public UserDTO userDto() {
-        return new UserDTO();
+    public UserRegDTO userRegDto() {
+        return new UserRegDTO();
     }
 
     @GetMapping
@@ -35,10 +35,10 @@ public class RegistrationController {
     }
 
     @PostMapping
-    public String registerUserAccount(@ModelAttribute("user") @Valid UserDTO userDto,
+    public String registerUserAccount(@ModelAttribute("user") @Valid UserRegDTO userRegDto,
                                       BindingResult result){
 
-        Optional<User> user = userService.findByUsername(userDto.getUsername());
+        Optional<User> user = userService.findByUsername(userRegDto.getUsername());
         if (user.isPresent()){
             result.rejectValue("username", null, "There is already an account registered with that username");
         }
@@ -47,7 +47,7 @@ public class RegistrationController {
             return "redirect:/registration?error";
         }
 
-        userService.save(userDto);
+        userService.save(userRegDto);
         return "redirect:/registration?success";
     }
 

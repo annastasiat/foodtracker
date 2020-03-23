@@ -2,6 +2,7 @@ package ua.training.foodtracker.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ua.training.foodtracker.dto.FoodDTO;
-import ua.training.foodtracker.dto.UserDTO;
 import ua.training.foodtracker.dto.UserFoodDTO;
 import ua.training.foodtracker.entity.Food;
 import ua.training.foodtracker.entity.User;
@@ -42,10 +42,17 @@ public class FoodController {
         return new FoodDTO();
     }
 
-    @GetMapping
+    @ModelAttribute("isAdmin")
+    public boolean isAdmin() {
+        UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
+    }
+
+    @GetMapping("/")
     public String home() {
         return "user/index";
     }
+
 
     @PostMapping("add_user_food")
     public String addUserFood(@ModelAttribute("userFood") @Valid UserFoodDTO userFoodDTO) {

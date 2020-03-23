@@ -31,28 +31,28 @@ public class UserCounting  {
         return userFoodService.findAllTodays()
                 .stream()
                 .mapToInt(food -> foodService.findByName(food.getFoodname()).get().getCalories())
-                .reduce(Integer::sum).getAsInt();
+                .reduce(Integer::sum).orElse(0);
     }
 
     public int todaysProteins() {
         return userFoodService.findAllTodays()
                 .stream()
                 .mapToInt(food -> foodService.findByName(food.getFoodname()).get().getProtein())
-                .reduce(Integer::sum).getAsInt();
+                .reduce(Integer::sum).orElse(0);
     }
 
     public int todaysCarbs() {
         return userFoodService.findAllTodays()
                 .stream()
                 .mapToInt(food -> foodService.findByName(food.getFoodname()).get().getCarbs())
-                .reduce(Integer::sum).getAsInt();
+                .reduce(Integer::sum).orElse(0);
     }
 
     public int todaysFats() {
         return userFoodService.findAllTodays()
                 .stream()
                 .mapToInt(food -> foodService.findByName(food.getFoodname()).get().getFat())
-                .reduce(Integer::sum).getAsInt();
+                .reduce(Integer::sum).orElse(0);
     }
 
 }

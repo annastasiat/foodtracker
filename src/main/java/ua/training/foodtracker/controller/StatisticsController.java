@@ -1,10 +1,14 @@
 package ua.training.foodtracker.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import ua.training.foodtracker.dto.UserTodayStatisticsDTO;
+import ua.training.foodtracker.entity.UserDetailsImpl;
 import ua.training.foodtracker.entity.UserFood;
 import ua.training.foodtracker.service.FoodService;
 import ua.training.foodtracker.service.UserCounting;
@@ -21,6 +25,12 @@ public class StatisticsController {
     private UserFoodService userFoodService;
     @Autowired
     private UserCounting userCounting;
+
+    @ModelAttribute("isAdmin")
+    public boolean isAdmin() {
+        UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
+    }
 
 
     @GetMapping(value = {"/statistics"})

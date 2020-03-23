@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.training.foodtracker.config.SecurityConfiguration;
 import ua.training.foodtracker.dto.UserFoodDTO;
+import ua.training.foodtracker.entity.User;
 import ua.training.foodtracker.entity.UserDetailsImpl;
 import ua.training.foodtracker.entity.UserFood;
 import ua.training.foodtracker.repository.UserFoodRepository;
@@ -54,12 +55,8 @@ public class UserFoodService {
         return userFoodRepository.findByUsername(((UserDetailsImpl) principal).getUsername());
     }
 
-    public List<UserFood> findAllBetween(Date date1, Date date2) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        return userFoodRepository.findByUsernameAndDateBetween(
-                ((UserDetailsImpl) principal).getUsername(), date1, date2);
-
+    public List<UserFood> getAllUsersFood(){
+        return userFoodRepository.findAll();
     }
 
 
