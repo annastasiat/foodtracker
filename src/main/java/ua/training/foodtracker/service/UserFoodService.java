@@ -37,7 +37,6 @@ public class UserFoodService {
         userFood.setUsername(((UserDetailsImpl) principal).getUsername());
         userFood.setFoodname(userFoodDto.getFoodName());
         userFood.setAmount(userFoodDto.getAmount());
-        //TODO
         userFood.setDate(Date.valueOf(LocalDate.now()));
 
         return userFoodRepository.save(userFood);

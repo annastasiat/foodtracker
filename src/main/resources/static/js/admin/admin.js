@@ -1,11 +1,10 @@
 angular.module("admin", [])
     .controller("UserCtrl", ["$scope", "$http", function ($scope, $http) {
         console.log("userCtrl")
-
-        //<script type="text/javascript" src="../js/admin.js"></script>
-
         $scope.users = [];
         $scope.test="test123";
+        $scope.foods = [];
+        $scope.usersFood = [];
         $scope.getUsers = function(){
             $http({
                 method: "GET",
@@ -20,10 +19,6 @@ angular.module("admin", [])
                 }
             );
         }
-
-/*
-        //$scope.food = [];
-        //$scope.usersFood = [];
         $scope.getFood = function(){
             $http({
                 method: "GET",
@@ -31,7 +26,7 @@ angular.module("admin", [])
                 headers: { "Content-Type" : "application/json" }
             }).then(
                 function(data) {
-                    $scope.food = data.data.foods;
+                    $scope.foods = data.data.foods;
                 },
                 function(error) {
                     console.log("foods error")
@@ -51,6 +46,6 @@ angular.module("admin", [])
                     console.log("usersFood error")
                 }
             );
-        }*/
+        }
 
     }]);

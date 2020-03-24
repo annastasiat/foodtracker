@@ -11,60 +11,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
 
 
-    <script>
-        angular.module("admin", [])
-            .controller("UserCtrl", ["$scope", "$http", function ($scope, $http) {
-                console.log("userCtrl")
-                $scope.users = [];
-                $scope.test="test123";
-                $scope.foods = [];
-                $scope.usersFood = [];
-                $scope.getUsers = function(){
-                    $http({
-                        method: "GET",
-                        url: "/api/admin/all_users",
-                        headers: { "Content-Type" : "application/json" }
-                    }).then(
-                        function(data) {
-                            $scope.users = data.data.users;
-                        },
-                        function(error) {
-                            console.log("users error")
-                        }
-                    );
-                }
-                $scope.getFood = function(){
-                    $http({
-                        method: "GET",
-                        url: "/api/admin/all_food",
-                        headers: { "Content-Type" : "application/json" }
-                    }).then(
-                        function(data) {
-                            $scope.foods = data.data.foods;
-                        },
-                        function(error) {
-                            console.log("foods error")
-                        }
-                    );
-                }
-                $scope.getUsersFood = function(){
-                    $http({
-                        method: "GET",
-                        url: "/api/admin/all_users_food",
-                        headers: { "Content-Type" : "application/json" }
-                    }).then(
-                        function(data) {
-                            $scope.usersFood = data.data.usersFood;
-                        },
-                        function(error) {
-                            console.log("usersFood error")
-                        }
-                    );
-                }
-
-            }]);
-    </script>
-
+    <script type="text/javascript" th:src="@{/js/admin/admin.js}"></script>
     <script>
         $(function () {
             $("#tabs").tabs();
@@ -134,7 +81,7 @@
                     <td>{{user.height}}</td>
                     <td>{{user.weight}}</td>
                     <td>{{user.age}}</td>
-                    <td>{{user.activity}}</td>
+                    <td>{{user.activityLevel}}</td>
                 </tr>
                 </tbody>
             </table>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"  ng-app="statistics" ng-controller="StatisticsCtrl">
 <head>
     <meta charset="UTF-8">
     <title>Home User</title>
@@ -14,6 +14,7 @@
             $("#tabs").tabs();
         });
     </script>
+    <script type="text/javascript" th:src="@{/js/user/statistics.js}"></script>
 
 </head>
 <body>
@@ -37,8 +38,8 @@
 
 
     <h2 class="page-header" th:text="#{messages.title.statistics.counting}"></h2>
-    <table class="table">
-        <thead class="thead-light">
+    <table class="table" ng-init="getuserStat()">
+        <thead class="thead-light" np-model="userStat">
         <tr>
             <th scope="col" th:text="#{messages.text.element}"></th>
             <th scope="col" th:text="#{messages.text.amount}"></th>
@@ -48,19 +49,19 @@
         <tbody>
         <tr>
             <td th:text="#{messages.enter.food.carbs}"></td>
-            <td th:utext="${userStatistics.carbs}"></td>
+            <td>{{userStat.carbs}}</td>
         </tr>
         <tr>
             <td th:text="#{messages.enter.food.protein}"></td>
-            <td th:utext="${userStatistics.protein}"></td>
+            <td>{{userStat.protein}}</td>
         </tr>
         <tr>
             <td th:text="#{messages.enter.food.fat}"></td>
-            <td th:utext="${userStatistics.fat}"></td>
+            <td>{{userStat.fat}}</td>
         </tr>
         <tr>
             <td th:text="#{messages.enter.food.calories}"></td>
-            <td th:utext="${userStatistics.calories}"></td>
+            <td>{{userStat.calories}}</td>
         </tr>
         </tbody>
     </table>
@@ -69,12 +70,12 @@
     <h2 class="page-header" th:text="#{messages.title.statistics.dates}"></h2>
     <div id="tabs">
         <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="nav-item">
+            <li class="nav-item" ng-init="getTodaysFood()">
                 <a class="nav-link" id="home-tab" data-toggle="tab" href="#tabs-1" role="tab" aria-controls="home"
                    aria-selected="true">Today</a>
             </li>
 
-            <li class="nav-item">
+            <li class="nav-item" ng-init="getAllFood()">
                 <a class="nav-link" id="contact-tab" data-toggle="tab" href="#tabs-2" role="tab" aria-controls="contact"
                    aria-selected="false">All time</a>
             </li>
@@ -87,7 +88,7 @@
 
         <div id="tabs-1">
 
-            <table class="table">
+            <table class="table" ng-model="todaysFood">
                 <thead class="thead-light">
                 <tr>
                     <th scope="col" th:text="#{messages.enter.food.name}"></th>
@@ -95,9 +96,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="food : ${todaysFood}">
-                    <td th:utext="${food.foodname}">...</td>
-                    <td th:utext="${food.amount}">...</td>
+                <tr ng-repeat="food in todaysFood">
+                    <td>{{food.foodname}}</td>
+                    <td>{{food.amount}}</td>
                 </tr>
                 </tbody>
             </table>
@@ -107,7 +108,7 @@
 
         <div id="tabs-2">
 
-            <table class="table">
+            <table class="table"  ng-model="allFood">
                 <thead class="thead-light">
                 <tr>
                     <th scope="col" th:text="#{messages.enter.food.name}"></th>
@@ -116,10 +117,10 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="food : ${allFood}">
-                    <td th:utext="${food.foodname}">...</td>
-                    <td th:utext="${food.amount}">...</td>
-                    <td th:utext="${food.date}">...</td>
+                <tr ng-repeat="food in allFood">
+                    <td>{{food.foodname}}</td>
+                    <td>{{food.amount}}</td>
+                    <td>{{food.date}}</td>
                 </tr>
                 </tbody>
             </table>
@@ -128,7 +129,6 @@
 
         <div id="tabs-3">
             <p>tbd</p>
-
 
 
         </div>

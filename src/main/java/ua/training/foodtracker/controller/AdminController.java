@@ -16,7 +16,9 @@ import ua.training.foodtracker.service.FoodService;
 import ua.training.foodtracker.service.UserFoodService;
 import ua.training.foodtracker.service.UserService;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin/")
@@ -43,7 +45,10 @@ public class AdminController {
 
     @GetMapping("all_users_food")
     public UsersFoodDTO getAllUsersFood(){
-        List<UserFood> usersFood = userFoodService.getAllUsersFood() ;
+        List<UserFood> usersFood = userFoodService.getAllUsersFood().stream()
+                .sorted(Comparator.comparing(UserFood::getDate, Comparator.reverseOrder()))
+                .collect(Collectors.toList());
+
         return UsersFoodDTO.builder().usersFood(usersFood).build();
     }
 

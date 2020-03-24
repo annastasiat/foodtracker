@@ -9,10 +9,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.training.foodtracker.config.LocaleConfiguration;
+import ua.training.foodtracker.dto.UserTodayStatisticsDTO;
 import ua.training.foodtracker.entity.User;
 import ua.training.foodtracker.entity.UserDetailsImpl;
 import ua.training.foodtracker.entity.UserFood;
 import ua.training.foodtracker.service.FoodService;
+import ua.training.foodtracker.service.UserCounting;
 import ua.training.foodtracker.service.UserFoodService;
 
 import java.security.Principal;
@@ -24,11 +26,14 @@ import java.util.stream.Collectors;
 @Controller
 public class PageController {
 
-
-
     @GetMapping("/login")
     public String login() {
         return "login";
+    }
+
+    @GetMapping("/registration")
+    public String reg() {
+        return "registration";
     }
 
     @GetMapping("/admin")
@@ -40,8 +45,31 @@ public class PageController {
     public String account(Model model) {
         UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("principal", principal);
+        model.addAttribute("isAdmin", principal.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")));
         return "user/account";
     }
+
+    @GetMapping("/account/change")
+    public String accountChange() {
+        return "user/account_change";
+    }
+
+    @GetMapping(value = {"/statistics"})
+    public String personList(Model model) {
+        UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("isAdmin", principal.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")));
+        return "user/statistics";
+    }
+
+    @GetMapping("/")
+    public String home(Model model) {
+        UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("isAdmin", principal.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")));
+        return "user/index";
+    }
+
+
+
 
 
 }

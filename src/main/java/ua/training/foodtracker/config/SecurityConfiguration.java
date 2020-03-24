@@ -1,16 +1,13 @@
 package ua.training.foodtracker.config;
 
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -31,12 +28,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/registration**").permitAll()
+                .antMatchers("/registration**", "/api/registration/**",
+                        "/js/**").permitAll()
                 .antMatchers("/login*").permitAll()
                 .antMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
-                .antMatchers("/user/**", "/api/user/**").hasAnyRole("ADMIN", "USER")
+                .antMatchers("/user/**", "/api/user/**", "/account/**").hasAnyRole("ADMIN", "USER")
                 .antMatchers("/**").hasAnyRole("ADMIN", "USER")
-                .anyRequest().authenticated()
+                //.anyRequest().authenticated()
                 .and()
                     .formLogin()
                     .loginPage("/login")
@@ -47,7 +45,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .clearAuthentication(true)
                     .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                     .logoutSuccessUrl("/login?logout")
-                    .permitAll();
+                    .permitAll()
+                .and().csrf().disable();
+                /*.and()
+                .exceptionHandling().accessDeniedPage("/accessDenied.jsp");*/;
+
+
     }
 
     @Bean

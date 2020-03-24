@@ -42,11 +42,14 @@ public class User {
     private Integer weight;
 
     @Column(name = "activity_level", nullable = false)
-    private Integer activityLevel;
+    private String activityLevel;
 
     @Column(name = "age", nullable = false)
     private Integer age;
 
     @Column(name = "first_name_ua", nullable = false)
     private String firstNameUa;
+
+    @Column(name = "gender", nullable = false)
+    private String gender;
 }

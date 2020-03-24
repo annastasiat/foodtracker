@@ -11,7 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.training.foodtracker.config.SecurityConfiguration;
-import ua.training.foodtracker.dto.UserRegDTO;
+import ua.training.foodtracker.dto.UserDTO;
 import ua.training.foodtracker.entity.Food;
 import ua.training.foodtracker.entity.User;
 import ua.training.foodtracker.entity.UserDetailsImpl;
@@ -47,20 +47,21 @@ public class UserService {
     }
 
     @Transactional
-    public User save(UserRegDTO userRegDto) {
+    public User save(UserDTO userDto) {
 
         return userRepository.save(
                 User.builder()
-                        .username(userRegDto.getUsername())
+                        .username(userDto.getUsername())
                         .active(true)
-                        .password(securityConfiguration.getPasswordEncoder().encode(userRegDto.getPassword()))
-                        .firstName(userRegDto.getFirstName())
-                        .firstNameUa(userRegDto.getFirstNameUa())
+                        .password(securityConfiguration.getPasswordEncoder().encode(userDto.getPassword()))
+                        .firstName(userDto.getFirstName())
+                        .firstNameUa(userDto.getFirstNameUa())
                         .roles("ROLE_USER")
-                        .height(userRegDto.getHeight())
-                        .weight(userRegDto.getWeight())
-                        .activityLevel(userRegDto.getActivityLevel())
-                        .age(userRegDto.getAge())
+                        .height(userDto.getHeight())
+                        .weight(userDto.getWeight())
+                        .activityLevel(userDto.getActivityLevel())
+                        .age(userDto.getAge())
+                        .gender(userDto.getGender())
                         .build()
         );
     }
