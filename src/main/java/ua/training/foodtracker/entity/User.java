@@ -13,7 +13,7 @@ import javax.persistence.*;
 @ToString
 
 @Entity
-@Table(name="users")
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -30,10 +30,10 @@ public class User {
     private boolean active;
 
     @Column(name = "roles")
-    private String  roles;
+    private String roles;
 
     @Column(name = "first_name")
-    private String  firstName;
+    private String firstName;
 
     @Column(name = "height", nullable = false)
     private Integer height;

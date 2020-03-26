@@ -1,6 +1,7 @@
 package ua.training.foodtracker.controller;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,48 +24,69 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Controller
 public class PageController {
 
-    @GetMapping("/login")
-    public String login() {
-        return "login";
+   @Autowired
+   private UserCounting userCounting;
+
+    @ModelAttribute("isAdmin")
+    public boolean isAdmin() {
+        UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
     }
 
-    @GetMapping("/registration")
-    public String reg() {
-        return "registration";
+    @ModelAttribute("principal")
+    public UserDetailsImpl principal() {
+         return (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
+
+    @ModelAttribute("todaysCalories")
+    public int todaysCalories() {
+        log.info("todaysCalories");
+        return userCounting.todaysCalories();
+    }
+
+    @ModelAttribute("caloriesNorm")
+    public int caloriesNorm() {
+        log.info("caloriesNorm");
+        return userCounting.countNorm();
+    }
+
 
     @GetMapping("/admin")
     public String admin() {
+        log.info("admin page");
         return "admin/index";
     }
 
     @RequestMapping("/account")
-    public String account(Model model) {
-        UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("principal", principal);
-        model.addAttribute("isAdmin", principal.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")));
+    public String account() {
+        log.info("account page");
         return "user/account";
     }
 
     @GetMapping("/account/change")
     public String accountChange() {
+        log.info("account change page");
         return "user/account_change";
+    }
+    @GetMapping("/account/change/password")
+    public String accountChangePassword() {
+        log.info("account change password page");
+        return "user/password_change";
     }
 
     @GetMapping(value = {"/statistics"})
-    public String personList(Model model) {
-        UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("isAdmin", principal.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")));
+    public String personList() {
+        log.info("statistics page");
         return "user/statistics";
     }
 
     @GetMapping("/")
-    public String home(Model model) {
-        UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("isAdmin", principal.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")));
+    public String home() {
+        log.info("home page");
         return "user/index";
     }
 

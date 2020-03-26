@@ -14,4 +14,5 @@ public class UserTodayStatisticsDTO {
     private Integer protein;
     private Integer fat;
     private Integer calories;
+    private Integer caloriesNorm;
 }

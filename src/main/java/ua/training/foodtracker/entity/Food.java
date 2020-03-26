@@ -13,7 +13,7 @@ import javax.persistence.*;
 @ToString
 
 @Entity
-@Table(name="food")
+@Table(name = "food")
 public class Food {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -30,8 +30,8 @@ public class Food {
     private Integer protein;
 
     @Column(name = "fat", nullable = false)
-    private Integer  fat;
+    private Integer fat;
 
     @Column(name = "calories")
-    private Integer  calories;
+    private Integer calories;
 }

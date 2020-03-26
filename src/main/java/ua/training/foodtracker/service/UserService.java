@@ -1,6 +1,7 @@
 package ua.training.foodtracker.service;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class UserService {
 
@@ -49,6 +51,7 @@ public class UserService {
     @Transactional
     public User save(UserDTO userDto) {
 
+        log.info("{}", securityConfiguration.getPasswordEncoder().encode(userDto.getPassword()));
         return userRepository.save(
                 User.builder()
                         .username(userDto.getUsername())
@@ -66,11 +69,13 @@ public class UserService {
         );
     }
 
-    public List<User> getAllUsers(){
+    public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-
-
+    @Transactional
+    public void updatePassword(String newPassword, String username){
+        userRepository.updatePassword(newPassword, username);
+    }
 
 }

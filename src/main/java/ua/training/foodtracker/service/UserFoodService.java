@@ -54,7 +54,7 @@ public class UserFoodService {
         return userFoodRepository.findByUsername(((UserDetailsImpl) principal).getUsername());
     }
 
-    public List<UserFood> getAllUsersFood(){
+    public List<UserFood> getAllUsersFood() {
         return userFoodRepository.findAll();
     }
 

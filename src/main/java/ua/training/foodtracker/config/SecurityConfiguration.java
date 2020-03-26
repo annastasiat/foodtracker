@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -34,7 +35,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
                 .antMatchers("/user/**", "/api/user/**", "/account/**").hasAnyRole("ADMIN", "USER")
                 .antMatchers("/**").hasAnyRole("ADMIN", "USER")
-                //.anyRequest().authenticated()
+                .anyRequest().authenticated()
                 .and()
                     .formLogin()
                     .loginPage("/login")
@@ -46,16 +47,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                     .logoutSuccessUrl("/login?logout")
                     .permitAll()
-                .and().csrf().disable();
-                /*.and()
-                .exceptionHandling().accessDeniedPage("/accessDenied.jsp");*/;
+                .and()
+                    .exceptionHandling().accessDeniedPage("/denied")
+                .and()
+                    .csrf().disable();
 
 
     }
 
     @Bean
     public PasswordEncoder getPasswordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
-        //return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder();
+        //return NoOpPasswordEncoder.getInstance();
     }
 }

@@ -10,6 +10,7 @@ import ua.training.foodtracker.entity.UserDetailsImpl;
 import ua.training.foodtracker.repository.UserRepository;
 
 import java.util.Optional;
+import java.util.function.BiFunction;
 
 @Service
 public class UserCounting {
@@ -29,9 +30,9 @@ public class UserCounting {
             User user = userOp.get();
             return (int) (ActivityLevel.valueOf(user.getActivityLevel()).getValue()
                     * (Gender.valueOf(user.getGender()).getValue()
-                        + 10 * user.getWeight()
-                        + 6.25 * user.getHeight()
-                        - 5 * user.getAge()));
+                    + 10 * user.getWeight()
+                    + 6.25 * user.getHeight()
+                    - 5 * user.getAge()));
         }
         return -1;
 
@@ -40,30 +41,28 @@ public class UserCounting {
     public int todaysCalories() {
         return userFoodService.findAllTodays()
                 .stream()
-                .map(food -> foodService.findByName(food.getFoodname()))
-                .filter(Optional::isPresent)
-                .mapToInt(food -> food.get().getCalories())
+                .mapToInt(food -> foodService.findByName(food.getFoodname()).get().getCalories()*food.getAmount()/100)
                 .reduce(Integer::sum).orElse(0);
     }
 
     public int todaysProteins() {
         return userFoodService.findAllTodays()
                 .stream()
-                .mapToInt(food -> foodService.findByName(food.getFoodname()).get().getProtein())
+                .mapToInt(food -> foodService.findByName(food.getFoodname()).get().getProtein()*food.getAmount()/100)
                 .reduce(Integer::sum).orElse(0);
     }
 
     public int todaysCarbs() {
         return userFoodService.findAllTodays()
                 .stream()
-                .mapToInt(food -> foodService.findByName(food.getFoodname()).get().getCarbs())
+                .mapToInt(food -> foodService.findByName(food.getFoodname()).get().getCarbs()*food.getAmount()/100)
                 .reduce(Integer::sum).orElse(0);
     }
 
     public int todaysFats() {
         return userFoodService.findAllTodays()
                 .stream()
-                .mapToInt(food -> foodService.findByName(food.getFoodname()).get().getFat())
+                .mapToInt(food -> foodService.findByName(food.getFoodname()).get().getFat()*food.getAmount()/100)
                 .reduce(Integer::sum).orElse(0);
     }
 

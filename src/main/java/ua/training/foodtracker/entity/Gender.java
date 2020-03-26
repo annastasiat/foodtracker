@@ -5,9 +5,11 @@ public enum Gender {
     MALE(5);
 
     private int value;
-    Gender(int val){
-        this.value=val;
+
+    Gender(int val) {
+        this.value = val;
     }
+
     public int getValue() {
         return value;
     }

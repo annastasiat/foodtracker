@@ -13,7 +13,7 @@ import java.sql.Date;
 @ToString
 
 @Entity
-@Table(name="users_food")
+@Table(name = "users_food")
 public class UserFood {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

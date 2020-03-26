@@ -43,6 +43,14 @@
                 </div>
             </div>
 
+            <div th:if="${todaysCalories > caloriesNorm}">
+                <div class="alert alert-warning">
+                    <p th:text="#{messages.alert.norm.exceeded}"></p>
+                    <p th:text="'todaysCalories:' + ${todaysCalories}"></p>
+                    <p th:text="'caloriesNorm: ' + ${caloriesNorm}"></p>
+                </div>
+            </div>
+
 
             <!--th:action="@{/add_user_food}"-->
             <form method="post" style="margin-bottom: 30px"

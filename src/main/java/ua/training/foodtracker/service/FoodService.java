@@ -19,12 +19,12 @@ public class FoodService {
     @Autowired
     private FoodRepository foodRepository;
 
-    public Optional<Food> findByName(String name){
+    public Optional<Food> findByName(String name) {
         return foodRepository.findByName(name);
     }
 
     @Transactional
-    public Food save(FoodDTO foodDTO){
+    public Food save(FoodDTO foodDTO) {
 
         return foodRepository.save(Food.builder()
                 .name(foodDTO.getName())
@@ -35,7 +35,7 @@ public class FoodService {
                 .build());
     }
 
-    public List<Food> getAllFood(){
+    public List<Food> getAllFood() {
         return foodRepository.findAll();
     }
 
