@@ -44,7 +44,6 @@ public class UserService {
 
     @Transactional
     public User save(UserDTO userDto) {
-
         log.info("{}", securityConfiguration.getPasswordEncoder().encode(userDto.getPassword()));
         return userRepository.save(
                 User.builder()
@@ -63,8 +62,7 @@ public class UserService {
         );
     }
 
-    public UsersDTO getAllUsers() {
-
+    public UsersDTO findAll() {
         return UsersDTO.builder().users(userRepository.findAll()).build();
 
     }

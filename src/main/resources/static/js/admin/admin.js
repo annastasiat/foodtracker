@@ -40,7 +40,7 @@ angular.module("admin", [])
                 headers: { "Content-Type" : "application/json" }
             }).then(
                 function(data) {
-                    $scope.usersFood = data.data.usersFood;
+                    $scope.usersFood = data.data.meals;
                 },
                 function(error) {
                     console.log("usersFood error")

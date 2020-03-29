@@ -117,13 +117,15 @@
                 <tr>
                     <th scope="col" th:text="#{messages.enter.username}"></th>
                     <th scope="col" th:text="#{messages.enter.food.name}"></th>
+                    <th scope="col" th:text="#{messages.text.amount}"></th>
                     <th scope="col" th:text="#{messages.enter.food.date}"></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr  ng-repeat="userFood in usersFood">
                     <td>{{userFood.username}}</td>
-                    <td>{{userFood.foodname}}</td>
+                    <td>{{userFood.foodName}}</td>
+                    <td>{{userFood.amount}}</td>
                     <td>{{userFood.date}}</td>
                 </tr>
                 </tbody>

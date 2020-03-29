@@ -20,11 +20,13 @@ public class UserFood {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "username", nullable = false)
-    private String username;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="username", referencedColumnName="username")
+    private User user;
 
-    @Column(name = "foodname", nullable = false)
-    private String foodname;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="foodname", referencedColumnName="name")
+    private Food food;
 
     @Column(name = "amount", nullable = false)
     private Integer amount;

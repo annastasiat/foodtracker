@@ -1,82 +1,111 @@
 package ua.training.foodtracker.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.training.foodtracker.config.SecurityConfiguration;
-import ua.training.foodtracker.dto.UserFoodDTO;
-import ua.training.foodtracker.dto.UsersFoodDTO;
-import ua.training.foodtracker.entity.User;
-import ua.training.foodtracker.entity.UserDetailsImpl;
-import ua.training.foodtracker.entity.UserFood;
+import ua.training.foodtracker.dto.*;
+import ua.training.foodtracker.entity.*;
+import ua.training.foodtracker.exception.FoodNotExistsException;
+import ua.training.foodtracker.exception.UserNotExistsException;
 import ua.training.foodtracker.repository.UserFoodRepository;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class UserFoodService {
     @Autowired
     private UserFoodRepository userFoodRepository;
+    @Autowired
+    private FoodService foodService;
+    @Autowired
+    private UserService userService;
 
-
-    /*public Optional<Food> findByFoodName(String username){
-        return userRepository.findByUsername(username);
-    }*/
+    private String getPrincipalUsername() {
+        return ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+    }
 
     @Transactional
-    public UserFood save(UserFoodDTO userFoodDto) {
+    public UserFood save(UserMealDTO userMealDto) throws FoodNotExistsException, UserNotExistsException {
 
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Food food = foodService.findByName(userMealDto.getFoodName()).orElseThrow(FoodNotExistsException::new);
+        User user = userService.findByUsername(getPrincipalUsername()).orElseThrow(UserNotExistsException::new);
 
-        return userFoodRepository.save(
-                UserFood.builder()
-                        .username(((UserDetailsImpl) principal).getUsername())
-                        .foodname(userFoodDto.getFoodName())
-                        .amount(userFoodDto.getAmount())
-                        .date(Date.valueOf(LocalDate.now()))
-                        .build()
-        );
+        return userFoodRepository.save(UserFood.builder()
+                .user(user)
+                .food(food)
+                .amount(userMealDto.getAmount())
+                .date(Date.valueOf(LocalDate.now()))
+                .build());
     }
 
-    public UsersFoodDTO findAllTodays() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        List<UserFood> todaysFood = userFoodRepository
-                .findByUsernameAndDate(((UserDetailsImpl) principal).getUsername(), Date.valueOf(LocalDate.now()));
-
-        return UsersFoodDTO.builder().usersFood(todaysFood).build();
-
-
+    public MealsDTO getAllUsersFoodForAdmin() {
+        return MealsDTO.builder().meals(
+                userFoodRepository.findAll()
+                        .stream()
+                        .map(MealDTO::new)
+                        .sorted(Comparator.comparing(MealDTO::getDate, Comparator.reverseOrder()))
+                        .collect(Collectors.toList()))
+                .build();
     }
 
-    public UsersFoodDTO findAll() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public UsersMealStatDTO findAllTodaysPrincipalStat() {
+        List<UserMealStatDTO> todaysFood = userFoodRepository
+                .findByUser_UsernameAndDate(getPrincipalUsername(), Date.valueOf(LocalDate.now()))
+                .stream()
+                .map(UserMealStatDTO::new)
+                .collect(Collectors.toList());
 
-        return UsersFoodDTO.builder()
-                .usersFood(
-                        userFoodRepository.findByUsername(((UserDetailsImpl) principal).getUsername())
-                                .stream()
-                                .sorted(Comparator.comparing(UserFood::getDate, Comparator.reverseOrder()))
-                                .collect(Collectors.toList())
-                ).build();
+        return UsersMealStatDTO.builder().usersFood(todaysFood).build();
     }
 
-    public UsersFoodDTO getAllUsersFood() {
-
-        return UsersFoodDTO.builder()
-                .usersFood(
-                        userFoodRepository.findAll()
-                                .stream()
-                                .sorted(Comparator.comparing(UserFood::getDate, Comparator.reverseOrder()))
-                                .collect(Collectors.toList())
-                ).build();
+    public UsersMealStatDTO findAllPrincipalStat() {
+        return UsersMealStatDTO.builder().usersFood(
+                userFoodRepository.findByUser_Username(getPrincipalUsername())
+                        .stream()
+                        .map(UserMealStatDTO::new)
+                        .sorted(Comparator.comparing(UserMealStatDTO::getDate, Comparator.reverseOrder()))
+                        .collect(Collectors.toList()))
+                .build();
     }
 
+    public int countNorm() throws UserNotExistsException {
+        User user = userService.findByUsername(getPrincipalUsername())
+                .orElseThrow(UserNotExistsException::new);
 
+        return (int) (ActivityLevel.valueOf(user.getActivityLevel()).getValue()
+                * (Gender.valueOf(user.getGender()).getValue()
+                + 10 * user.getWeight()
+                + 6.25 * user.getHeight()
+                - 5 * user.getAge()));
+    }
+
+    private int todaysFoodElement(Function<Food, Integer> foodGetter) {
+        return userFoodRepository
+                .findByUser_Username(getPrincipalUsername())
+                .stream()
+                .mapToInt(userFood -> foodGetter.apply(userFood.getFood()) * userFood.getAmount() / 100)
+                .reduce(Integer::sum).orElse(0);
+    }
+
+    public int todaysCalories() {
+        return todaysFoodElement(Food::getCalories);
+    }
+
+    public UserTodayStatisticsDTO getTodaysPrincipalStatistics() throws UserNotExistsException {
+        return UserTodayStatisticsDTO.builder()
+                .calories(todaysCalories())
+                .carbs(todaysFoodElement(Food::getCarbs))
+                .protein(todaysFoodElement(Food::getProtein))
+                .fat(todaysFoodElement(Food::getFat))
+                .caloriesNorm(countNorm())
+                .build();
+    }
 }

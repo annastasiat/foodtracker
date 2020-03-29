@@ -7,11 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.training.foodtracker.dto.FoodDTO;
 import ua.training.foodtracker.dto.FoodsDTO;
 import ua.training.foodtracker.entity.Food;
-import ua.training.foodtracker.entity.User;
 import ua.training.foodtracker.repository.FoodRepository;
-import ua.training.foodtracker.repository.UserFoodRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,7 +23,6 @@ public class FoodService {
 
     @Transactional
     public Food save(FoodDTO foodDTO) {
-
         return foodRepository.save(Food.builder()
                 .name(foodDTO.getName())
                 .carbs(foodDTO.getCarbs())
@@ -36,10 +32,8 @@ public class FoodService {
                 .build());
     }
 
-    public FoodsDTO getAllFood() {
+    public FoodsDTO findAll() {
         return FoodsDTO.builder().foods(foodRepository.findAll()).build();
-
-
     }
 
 

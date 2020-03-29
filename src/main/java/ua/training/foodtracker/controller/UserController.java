@@ -3,31 +3,23 @@ package ua.training.foodtracker.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.training.foodtracker.config.SecurityConfiguration;
 import ua.training.foodtracker.dto.*;
-import ua.training.foodtracker.entity.Food;
 import ua.training.foodtracker.entity.User;
 import ua.training.foodtracker.entity.UserDetailsImpl;
-import ua.training.foodtracker.entity.UserFood;
 import ua.training.foodtracker.exception.FoodExistsException;
 import ua.training.foodtracker.exception.FoodNotExistsException;
 import ua.training.foodtracker.exception.PasswordIncorrectException;
 import ua.training.foodtracker.exception.UserNotExistsException;
 import ua.training.foodtracker.service.FoodService;
-import ua.training.foodtracker.service.UserCounting;
 import ua.training.foodtracker.service.UserFoodService;
 import ua.training.foodtracker.service.UserService;
 
-import java.util.Comparator;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -37,8 +29,6 @@ public class UserController {
 
     @Autowired
     private UserFoodService userFoodService;
-    @Autowired
-    private UserCounting userCounting;
     @Autowired
     private FoodService foodService;
     @Autowired
@@ -50,33 +40,34 @@ public class UserController {
     public UserDTO user() {
         UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<User> userOp = userService.findByUsername(principal.getUsername());
+        //log.info("{}",LocaleContextHolder.getLocale());
         return new UserDTO(userOp.get());
     }
 
     @GetMapping("todays_food")
-    public UsersFoodDTO getTodaysFood() {
-        return userFoodService.findAllTodays();
+    public UsersMealStatDTO getTodaysFood() {
+        return userFoodService.findAllTodaysPrincipalStat();
     }
 
     @GetMapping("all_food")
-    public UsersFoodDTO getAllFood() {
-        return userFoodService.findAll();
+    public UsersMealStatDTO getAllFood() {
+        return userFoodService.findAllPrincipalStat();
     }
 
     @GetMapping("user_statistics")
-    public UserTodayStatisticsDTO getTodaysUserStatistics() {
-        return userCounting.getTodaysUserStatistics();
+    public UserTodayStatisticsDTO getTodaysUserStatistics() throws UserNotExistsException {
+        return userFoodService.getTodaysPrincipalStatistics();
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("add_user_food")
-    public int addUserFood(UserFoodDTO userFoodDTO) throws FoodNotExistsException {
+    public int addUserFood(UserMealDTO userMealDTO) throws FoodNotExistsException, UserNotExistsException {
 
-        foodService.findByName(userFoodDTO.getFoodName()).orElseThrow(FoodNotExistsException::new);
+        foodService.findByName(userMealDTO.getFoodName()).orElseThrow(FoodNotExistsException::new);
 
-        log.info("User food added: {}", userFoodService.save(userFoodDTO));
+        log.info("User food added: {}", userFoodService.save(userMealDTO));
 
-        return userCounting.todaysCalories();
+        return userFoodService.todaysCalories();
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -93,7 +84,7 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("change_password")
-    public void changePassword(PasswordChangeDTO passwordChangeDTO) throws UserNotExistsException, PasswordIncorrectException {
+    public void changePassword(PasswordChangeDTO passwordChangeDTO) throws PasswordIncorrectException {
 
         UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("PasswordChangeDTO: {}", passwordChangeDTO);

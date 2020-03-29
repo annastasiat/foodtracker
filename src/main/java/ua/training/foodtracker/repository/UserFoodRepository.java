@@ -9,9 +9,11 @@ import java.sql.Date;
 import java.util.List;
 
 public interface UserFoodRepository extends JpaRepository<UserFood, Long> {
-    List<UserFood> findByUsernameAndDate(String username, Date date);
+    List<UserFood> findByUser_UsernameAndDate(String username, Date date);
 
-    List<UserFood> findByUsername(String username);
+    List<UserFood> findByUser_Username(String username);
+
+    //List<UserFood> findByUser(User user);
 
     List<UserFood> findAll();
 

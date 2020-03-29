@@ -4,6 +4,8 @@ package ua.training.foodtracker.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -14,7 +16,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
@@ -52,4 +54,5 @@ public class User {
 
     @Column(name = "gender", nullable = false)
     private String gender;
+
 }
