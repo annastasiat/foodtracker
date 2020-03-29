@@ -92,6 +92,7 @@
                 <thead class="thead-light">
                 <tr>
                     <th scope="col" th:text="#{messages.enter.food.name}"></th>
+                    <th scope="col" th:text="#{messages.enter.food.name.ua}"></th>
                     <th scope="col" th:text="#{messages.enter.food.carbs}"></th>
                     <th scope="col" th:text="#{messages.enter.food.protein}"></th>
                     <th scope="col" th:text="#{messages.enter.food.fat}"></th>
@@ -101,6 +102,7 @@
                 <tbody>
                 <tr  ng-repeat="food in foods">
                     <td>{{food.name}}</td>
+                    <td>{{food.nameUa}}</td>
                     <td>{{food.carbs}}</td>
                     <td>{{food.protein}}</td>
                     <td>{{food.fat}}</td>

@@ -44,7 +44,6 @@ public class UserService {
 
     @Transactional
     public User save(UserDTO userDto) {
-        log.info("{}", securityConfiguration.getPasswordEncoder().encode(userDto.getPassword()));
         return userRepository.save(
                 User.builder()
                         .username(userDto.getUsername())

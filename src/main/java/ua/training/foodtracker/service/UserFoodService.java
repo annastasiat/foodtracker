@@ -2,6 +2,7 @@ package ua.training.foodtracker.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -32,6 +34,10 @@ public class UserFoodService {
         return ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
     }
 
+    private boolean isLocaleUa() {
+        return LocaleContextHolder.getLocale().equals(new Locale("ua"));
+    }
+
     @Transactional
     public UserFood save(UserMealDTO userMealDto) throws FoodNotExistsException, UserNotExistsException {
 
@@ -46,11 +52,16 @@ public class UserFoodService {
                 .build());
     }
 
-    public MealsDTO getAllUsersFoodForAdmin() {
+    public MealsDTO findAllUsersFoodForAdmin() {
         return MealsDTO.builder().meals(
                 userFoodRepository.findAll()
                         .stream()
-                        .map(MealDTO::new)
+                        .map(userFood -> MealDTO.builder()
+                                .username(userFood.getUser().getUsername())
+                                .foodName(isLocaleUa() ? userFood.getFood().getNameUa() : userFood.getFood().getName())
+                                .amount(userFood.getAmount())
+                                .date(userFood.getDate())
+                                .build())
                         .sorted(Comparator.comparing(MealDTO::getDate, Comparator.reverseOrder()))
                         .collect(Collectors.toList()))
                 .build();
@@ -60,7 +71,10 @@ public class UserFoodService {
         List<UserMealStatDTO> todaysFood = userFoodRepository
                 .findByUser_UsernameAndDate(getPrincipalUsername(), Date.valueOf(LocalDate.now()))
                 .stream()
-                .map(UserMealStatDTO::new)
+                .map(userFood -> UserMealStatDTO.builder()
+                        .amount(userFood.getAmount())
+                        .date(userFood.getDate())
+                        .foodName(isLocaleUa() ? userFood.getFood().getNameUa() : userFood.getFood().getName()).build())
                 .collect(Collectors.toList());
 
         return UsersMealStatDTO.builder().usersFood(todaysFood).build();
@@ -70,13 +84,16 @@ public class UserFoodService {
         return UsersMealStatDTO.builder().usersFood(
                 userFoodRepository.findByUser_Username(getPrincipalUsername())
                         .stream()
-                        .map(UserMealStatDTO::new)
+                        .map(userFood -> UserMealStatDTO.builder()
+                                .amount(userFood.getAmount())
+                                .date(userFood.getDate())
+                                .foodName(isLocaleUa() ? userFood.getFood().getNameUa() : userFood.getFood().getName()).build())
                         .sorted(Comparator.comparing(UserMealStatDTO::getDate, Comparator.reverseOrder()))
                         .collect(Collectors.toList()))
                 .build();
     }
 
-    public int countNorm() throws UserNotExistsException {
+    public int countCaloriesNorm() throws UserNotExistsException {
         User user = userService.findByUsername(getPrincipalUsername())
                 .orElseThrow(UserNotExistsException::new);
 
@@ -105,7 +122,7 @@ public class UserFoodService {
                 .carbs(todaysFoodElement(Food::getCarbs))
                 .protein(todaysFoodElement(Food::getProtein))
                 .fat(todaysFoodElement(Food::getFat))
-                .caloriesNorm(countNorm())
+                .caloriesNorm(countCaloriesNorm())
                 .build();
     }
 }

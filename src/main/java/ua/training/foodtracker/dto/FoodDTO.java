@@ -14,6 +14,7 @@ import javax.persistence.Column;
 public class FoodDTO {
 
     private String name;
+    private String nameUa;
     private Integer carbs;
     private Integer protein;
     private Integer fat;

@@ -32,7 +32,7 @@ public class AdminController {
 
     @GetMapping("all_users_food")
     public MealsDTO getAllUsersFood() {
-        return userFoodService.getAllUsersFoodForAdmin();
+        return userFoodService.findAllUsersFoodForAdmin();
     }
 
 

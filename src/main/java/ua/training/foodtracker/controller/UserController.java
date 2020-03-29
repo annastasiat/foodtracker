@@ -63,6 +63,7 @@ public class UserController {
     @PostMapping("add_user_food")
     public int addUserFood(UserMealDTO userMealDTO) throws FoodNotExistsException, UserNotExistsException {
 
+        log.info("adding food");
         foodService.findByName(userMealDTO.getFoodName()).orElseThrow(FoodNotExistsException::new);
 
         log.info("User food added: {}", userFoodService.save(userMealDTO));

@@ -24,6 +24,9 @@ public class Food implements Serializable {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "name_ua", nullable = false)
+    private String nameUa;
+
     @Column(name = "carbs", nullable = false)
     private Integer carbs;
 
