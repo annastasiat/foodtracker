@@ -4,6 +4,7 @@ angular.module("password", [])
 
         $scope.passwordDto = {};
         $scope.showIncorrectPassword = false;
+        $scope.showPasswordChanged=false;
 
 
         $scope.changePassword = function (passwordDto) {
@@ -15,9 +16,11 @@ angular.module("password", [])
             }).then(
                 function (data) {
                     $scope.showIncorrectPassword = false;
+                    $scope.showPasswordChanged=true;
                 },
                 function (error) {
                     $scope.showIncorrectPassword = true;
+                    $scope.showPasswordChanged=false;
                 }
             );
         }

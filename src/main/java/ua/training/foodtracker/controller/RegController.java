@@ -29,8 +29,7 @@ public class RegController {
     @PostMapping("register")
     public void register(UserDTO userDto) throws UserExistsException {
 
-        Optional<User> user = userService.findByUsername(userDto.getUsername());
-        if (user.isPresent()){
+        if (userService.findByUsername(userDto.getUsername()).isPresent()) {
             log.info("UserExistsException throwing");
             throw new UserExistsException();
         }

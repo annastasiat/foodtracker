@@ -12,9 +12,32 @@ import ua.training.foodtracker.exception.*;
 public class GlobalExceptionController {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({UserExistsException.class, UserNotExistsException.class,
-            FoodExistsException.class, FoodNotExistsException.class, PasswordIncorrectException.class})
-    public  void userEx() {
-        log.info("exception handled");
+    @ExceptionHandler({UserExistsException.class})
+    public void userExists() {
+        log.info("UserExistsException handled");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UserNotExistsException.class)
+    public void userNotExists() {
+        log.info("UserNotExistsException handled");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(FoodExistsException.class)
+    public void foodExists() {
+        log.info("FoodExistsException handled");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(FoodNotExistsException.class)
+    public void foodNotExists() {
+        log.info("FoodNotExistsException handled");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(PasswordIncorrectException.class)
+    public void passwordIncorrect() {
+        log.info("PasswordIncorrectException handled");
     }
 }

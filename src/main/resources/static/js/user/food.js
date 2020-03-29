@@ -9,6 +9,8 @@ angular.module("food", [])
         $scope.showAddUserError = false;
         $scope.showAddError = false;
 
+        $scope.userStat={};
+        $scope.myRegex = /^[a-zA-Z]{1,45}$/;
 
         $scope.addUSerFood = function (userFood) {
             $http({
@@ -22,6 +24,7 @@ angular.module("food", [])
                     $scope.showAddSuccess = false;
                     $scope.showAddUserError = false;
                     $scope.showAddError = false;
+                    $scope.userStat.calories=data.data;
                 },
                 function (error) {
                     $scope.showAddUserError = true;
@@ -51,6 +54,21 @@ angular.module("food", [])
                     $scope.showAddSuccess = false;
                     $scope.showAddUserError = false;
 
+                }
+            );
+        }
+
+        $scope.getuserStat = function () {
+            $http({
+                method: "GET",
+                url: "/api/user/user_statistics",
+                headers: {"Content-Type": "application/json"}
+            }).then(
+                function (data) {
+                    $scope.userStat = data.data;
+                },
+                function (error) {
+                    console.log("users error")
                 }
             );
         }

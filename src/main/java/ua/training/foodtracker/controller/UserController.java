@@ -50,56 +50,44 @@ public class UserController {
     public UserDTO user() {
         UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<User> userOp = userService.findByUsername(principal.getUsername());
-        //log.info("{}", userOp.get());
         return new UserDTO(userOp.get());
     }
 
     @GetMapping("todays_food")
     public UsersFoodDTO getTodaysFood() {
-        List<UserFood> todaysFood = userFoodService.findAllTodays();
-        return UsersFoodDTO.builder().usersFood(todaysFood).build();
+        return userFoodService.findAllTodays();
     }
 
     @GetMapping("all_food")
     public UsersFoodDTO getAllFood() {
-        List<UserFood> allFood = userFoodService.findAll().stream()
-                .sorted(Comparator.comparing(UserFood::getDate, Comparator.reverseOrder()))
-                .collect(Collectors.toList());
-        return UsersFoodDTO.builder().usersFood(allFood).build();
+        return userFoodService.findAll();
     }
 
     @GetMapping("user_statistics")
-    public UserTodayStatisticsDTO getUserStatistics() {
-        return UserTodayStatisticsDTO
-                .builder()
-                .calories(userCounting.todaysCalories())
-                .carbs(userCounting.todaysCarbs())
-                .protein(userCounting.todaysProteins())
-                .fat(userCounting.todaysFats())
-                .caloriesNorm(userCounting.countNorm())
-                .build();
+    public UserTodayStatisticsDTO getTodaysUserStatistics() {
+        return userCounting.getTodaysUserStatistics();
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("add_user_food")
-    public void addUserFood(UserFoodDTO userFoodDTO) throws FoodNotExistsException {
-        Optional<Food> food = foodService.findByName(userFoodDTO.getFoodName());
-        if (!food.isPresent()) {
-            throw new FoodNotExistsException();
-        }
+    public int addUserFood(UserFoodDTO userFoodDTO) throws FoodNotExistsException {
+
+        foodService.findByName(userFoodDTO.getFoodName()).orElseThrow(FoodNotExistsException::new);
+
         log.info("User food added: {}", userFoodService.save(userFoodDTO));
+
+        return userCounting.todaysCalories();
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("add_food")
     public void addFood(FoodDTO foodDTO) throws FoodExistsException {
 
-        Optional<Food> food = foodService.findByName(foodDTO.getName());
-        if (food.isPresent()) {
+        if (foodService.findByName(foodDTO.getName()).isPresent()) {
             throw new FoodExistsException();
         }
-
         log.info("Food added: {}", foodService.save(foodDTO));
+
     }
 
 
@@ -110,18 +98,12 @@ public class UserController {
         UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("PasswordChangeDTO: {}", passwordChangeDTO);
 
-        Optional<User> userOp = userService.findByUsername(principal.getUsername());
-
-        if (!userOp.isPresent()) {
-            throw new UserNotExistsException();
-        }
         if (!securityConfiguration.getPasswordEncoder()
                 .matches(passwordChangeDTO.getOldPassword(), principal.getPassword())) {
             throw new PasswordIncorrectException();
         }
 
-        userService.updatePassword(securityConfiguration.getPasswordEncoder()
-                .encode(passwordChangeDTO.getNewPassword()), principal.getUsername());
+        userService.updatePassword(passwordChangeDTO.getNewPassword(), principal.getUsername());
         log.info("Password changed");
     }
 

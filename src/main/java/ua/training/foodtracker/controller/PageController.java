@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.training.foodtracker.config.LocaleConfiguration;
 import ua.training.foodtracker.dto.UserTodayStatisticsDTO;
+import ua.training.foodtracker.entity.Role;
 import ua.training.foodtracker.entity.User;
 import ua.training.foodtracker.entity.UserDetailsImpl;
 import ua.training.foodtracker.entity.UserFood;
@@ -28,32 +29,17 @@ import java.util.stream.Collectors;
 @Controller
 public class PageController {
 
-   @Autowired
-   private UserCounting userCounting;
-
     @ModelAttribute("isAdmin")
     public boolean isAdmin() {
-        UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return principal.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        return ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+                .getAuthorities()
+                .contains(new SimpleGrantedAuthority(Role.ROLE_ADMIN.name()));
     }
 
     @ModelAttribute("principal")
     public UserDetailsImpl principal() {
-         return (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
-
-    @ModelAttribute("todaysCalories")
-    public int todaysCalories() {
-        log.info("todaysCalories");
-        return userCounting.todaysCalories();
-    }
-
-    @ModelAttribute("caloriesNorm")
-    public int caloriesNorm() {
-        log.info("caloriesNorm");
-        return userCounting.countNorm();
-    }
-
 
     @GetMapping("/admin")
     public String admin() {
@@ -72,6 +58,7 @@ public class PageController {
         log.info("account change page");
         return "user/account_change";
     }
+
     @GetMapping("/account/change/password")
     public String accountChangePassword() {
         log.info("account change password page");
@@ -89,9 +76,6 @@ public class PageController {
         log.info("home page");
         return "user/index";
     }
-
-
-
 
 
 }

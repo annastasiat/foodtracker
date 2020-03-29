@@ -13,10 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.training.foodtracker.config.SecurityConfiguration;
 import ua.training.foodtracker.dto.UserDTO;
-import ua.training.foodtracker.entity.Food;
-import ua.training.foodtracker.entity.User;
-import ua.training.foodtracker.entity.UserDetailsImpl;
-import ua.training.foodtracker.entity.UserFood;
+import ua.training.foodtracker.dto.UsersDTO;
+import ua.training.foodtracker.entity.*;
 import ua.training.foodtracker.repository.UserFoodRepository;
 import ua.training.foodtracker.repository.UserRepository;
 
@@ -36,10 +34,6 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private UserFoodService userFoodService;
-    @Autowired
-    private FoodService foodService;
 
     @Autowired
     private SecurityConfiguration securityConfiguration;
@@ -59,7 +53,7 @@ public class UserService {
                         .password(securityConfiguration.getPasswordEncoder().encode(userDto.getPassword()))
                         .firstName(userDto.getFirstName())
                         .firstNameUa(userDto.getFirstNameUa())
-                        .roles("ROLE_USER")
+                        .roles(Role.ROLE_USER.name())
                         .height(userDto.getHeight())
                         .weight(userDto.getWeight())
                         .activityLevel(userDto.getActivityLevel())
@@ -69,13 +63,16 @@ public class UserService {
         );
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public UsersDTO getAllUsers() {
+
+        return UsersDTO.builder().users(userRepository.findAll()).build();
+
     }
 
     @Transactional
     public void updatePassword(String newPassword, String username){
-        userRepository.updatePassword(newPassword, username);
+        userRepository.updatePassword(securityConfiguration.getPasswordEncoder()
+                .encode(newPassword), username);
     }
 
 }

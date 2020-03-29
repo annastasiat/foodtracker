@@ -32,24 +32,18 @@ public class AdminController {
     private UserFoodService userFoodService;
 
     @GetMapping("all_users")
-    public UsersDTO getAllUsers(){
-        List<User> users = userService.getAllUsers();
-        return UsersDTO.builder().users(users).build();
+    public UsersDTO getAllUsers() {
+        return userService.getAllUsers();
     }
 
     @GetMapping("all_food")
-    public FoodsDTO getAllFood(){
-        List<Food> foods = foodService.getAllFood();
-        return FoodsDTO.builder().foods(foods).build();
+    public FoodsDTO getAllFood() {
+        return foodService.getAllFood();
     }
 
     @GetMapping("all_users_food")
-    public UsersFoodDTO getAllUsersFood(){
-        List<UserFood> usersFood = userFoodService.getAllUsersFood().stream()
-                .sorted(Comparator.comparing(UserFood::getDate, Comparator.reverseOrder()))
-                .collect(Collectors.toList());
-
-        return UsersFoodDTO.builder().usersFood(usersFood).build();
+    public UsersFoodDTO getAllUsersFood() {
+        return userFoodService.getAllUsersFood();
     }
 
 

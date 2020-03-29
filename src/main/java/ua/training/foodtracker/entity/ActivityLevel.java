@@ -9,8 +9,8 @@ public enum ActivityLevel {
 
     private double value;
 
-    ActivityLevel(double val) {
-        this.value = val;
+    ActivityLevel(double value) {
+        this.value = value;
     }
 
     public double getValue() {

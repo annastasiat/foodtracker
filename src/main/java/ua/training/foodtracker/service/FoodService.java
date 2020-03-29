@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.training.foodtracker.dto.FoodDTO;
+import ua.training.foodtracker.dto.FoodsDTO;
 import ua.training.foodtracker.entity.Food;
 import ua.training.foodtracker.entity.User;
 import ua.training.foodtracker.repository.FoodRepository;
@@ -35,8 +36,10 @@ public class FoodService {
                 .build());
     }
 
-    public List<Food> getAllFood() {
-        return foodRepository.findAll();
+    public FoodsDTO getAllFood() {
+        return FoodsDTO.builder().foods(foodRepository.findAll()).build();
+
+
     }
 
 

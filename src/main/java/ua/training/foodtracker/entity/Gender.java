@@ -6,8 +6,8 @@ public enum Gender {
 
     private int value;
 
-    Gender(int val) {
-        this.value = val;
+    Gender(int value) {
+        this.value = value;
     }
 
     public int getValue() {
