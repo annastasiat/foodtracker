@@ -3,6 +3,7 @@ package ua.training.foodtracker.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.training.foodtracker.dto.FoodDTO;
@@ -20,8 +21,11 @@ public class FoodService {
     private FoodRepository foodRepository;
 
     public Optional<Food> findByName(String name) {
-        return LocaleContextHolder.getLocale().equals(new Locale("ua"))
-                ? foodRepository.findByNameUa(name) : foodRepository.findByName(name);
+        if (LocaleContextHolder.getLocale().equals(new Locale("ua"))) {
+            return foodRepository.findByNameUa(name);
+        } else {
+            return foodRepository.findByName(name);
+        }
     }
 
     @Transactional
@@ -36,8 +40,8 @@ public class FoodService {
                 .build());
     }
 
-    public FoodsDTO findAll() {
-        return FoodsDTO.builder().foods(foodRepository.findAll()).build();
+    public FoodsDTO findAll(Pageable pageable) {
+        return FoodsDTO.builder().foods(foodRepository.findAll(pageable)).build();
     }
 
 

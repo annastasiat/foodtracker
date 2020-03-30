@@ -4,6 +4,9 @@ package ua.training.foodtracker.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +22,7 @@ import ua.training.foodtracker.service.FoodService;
 import ua.training.foodtracker.service.UserFoodService;
 import ua.training.foodtracker.service.UserService;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 
@@ -37,21 +41,20 @@ public class UserController {
     private SecurityConfiguration securityConfiguration;
 
     @GetMapping("user")
-    public UserDTO user() {
+    public UserDTO user() throws UserNotExistsException {
         UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> userOp = userService.findByUsername(principal.getUsername());
-        //log.info("{}",LocaleContextHolder.getLocale());
-        return new UserDTO(userOp.get());
+        log.info("locale {}",LocaleContextHolder.getLocale());
+        return new UserDTO(userService.findByUsername(principal.getUsername()).orElseThrow(UserNotExistsException::new));
     }
 
     @GetMapping("todays_food")
-    public UsersMealStatDTO getTodaysFood() {
-        return userFoodService.findAllTodaysPrincipalStat();
+    public UsersMealStatDTO getTodaysFood(@PageableDefault(sort = "dateTime", direction = Sort.Direction.DESC) Pageable pageable) {
+        return userFoodService.findAllTodaysPrincipalStat(pageable);
     }
 
     @GetMapping("all_food")
-    public UsersMealStatDTO getAllFood() {
-        return userFoodService.findAllPrincipalStat();
+    public UsersMealStatDTO getAllFood(@PageableDefault(sort = "dateTime", direction = Sort.Direction.DESC) Pageable pageable) {
+        return userFoodService.findAllPrincipalStat(pageable);
     }
 
     @GetMapping("user_statistics")
@@ -63,11 +66,9 @@ public class UserController {
     @PostMapping("add_user_food")
     public int addUserFood(UserMealDTO userMealDTO) throws FoodNotExistsException, UserNotExistsException {
 
-        log.info("adding food");
         foodService.findByName(userMealDTO.getFoodName()).orElseThrow(FoodNotExistsException::new);
 
         log.info("User food added: {}", userFoodService.save(userMealDTO));
-
         return userFoodService.todaysCalories();
     }
 
@@ -99,12 +100,5 @@ public class UserController {
         log.info("Password changed");
     }
 
-
-    @ResponseStatus(HttpStatus.OK)
-    @PostMapping("change_account")
-    public void changeAccount(UserDTO userDTO) {
-
-        //TODO record update in repository and service
-    }
 }
 

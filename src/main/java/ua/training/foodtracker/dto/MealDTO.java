@@ -3,7 +3,10 @@ package ua.training.foodtracker.dto;
 import lombok.*;
 import ua.training.foodtracker.entity.UserFood;
 
-import java.util.Date;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -15,12 +18,8 @@ public class MealDTO {
     String username;
     String foodName;
     Integer amount;
-    Date date;
+    LocalDate date;
+    LocalTime time;
 
-    public MealDTO(UserFood userFood){
-        this.username = userFood.getUser().getUsername();
-        this.foodName = userFood.getFood().getName();
-        this.amount = userFood.getAmount();
-        this.date = userFood.getDate();
-    }
+
 }

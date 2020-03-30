@@ -1,14 +1,23 @@
 package ua.training.foodtracker.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ua.training.foodtracker.dto.*;
 import ua.training.foodtracker.service.FoodService;
 import ua.training.foodtracker.service.UserFoodService;
 import ua.training.foodtracker.service.UserService;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/admin/")
 public class AdminController {
@@ -26,13 +35,17 @@ public class AdminController {
     }
 
     @GetMapping("all_food")
-    public FoodsDTO getAllFood() {
-        return foodService.findAll();
+    public FoodsDTO getAllFood(@PageableDefault(sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
+
+        log.info("all_food page: {}", pageable);
+        return foodService.findAll(pageable);
     }
 
     @GetMapping("all_users_food")
-    public MealsDTO getAllUsersFood() {
-        return userFoodService.findAllUsersFoodForAdmin();
+    public MealsDTO getAllUsersFood(@PageableDefault(sort = "dateTime", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        log.info("all_users_food page: {}", pageable);
+        return userFoodService.findAllUsersFoodForAdmin(pageable);
     }
 
 

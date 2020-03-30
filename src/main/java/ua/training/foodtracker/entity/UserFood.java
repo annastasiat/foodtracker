@@ -4,6 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -31,8 +33,7 @@ public class UserFood {
     @Column(name = "amount", nullable = false)
     private Integer amount;
 
-    @Column(name = "date", nullable = false)
-    private Date date;
-
+    @Column(name = "date_time", nullable = false)
+    private LocalDateTime dateTime;
 
 }

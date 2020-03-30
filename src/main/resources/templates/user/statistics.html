@@ -103,6 +103,29 @@
                 </tbody>
             </table>
 
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item">
+                        <a class="page-link" href="" aria-label="Previous"
+                           ng-click="todaysFoodPage=(todaysFoodPage>0)?todaysFoodPage-1:todaysFoodPage;getTodaysFood()">
+                            <span aria-hidden="true">&laquo;</span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href=""  th:text="#{messages.button.first}"
+                                             ng-click="todaysFoodPage=0;getTodaysFood()"></a></li>
+                    <li class="page-item"><a class="page-link" href="" th:text="#{messages.button.last}"
+                                             ng-click="todaysFoodPage=todaysFoodPageMax;getTodaysFood()"></a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="" aria-label="Next"
+                           ng-click="todaysFoodPage=(todaysFoodPage<todaysFoodPageMax)?todaysFoodPage+1:todaysFoodPage;getTodaysFood()">
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
         </div>
 
 
@@ -114,6 +137,7 @@
                     <th scope="col" th:text="#{messages.enter.food.name}"></th>
                     <th scope="col" th:text="#{messages.enter.food.amount}"></th>
                     <th scope="col" th:text="#{messages.enter.food.date}"></th>
+                    <th scope="col" th:text="#{messages.enter.food.time}"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -121,9 +145,31 @@
                     <td>{{food.foodName}}</td>
                     <td>{{food.amount}}</td>
                     <td>{{food.date}}</td>
+                    <td>{{food.time}}</td>
                 </tr>
                 </tbody>
             </table>
+
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item">
+                        <a class="page-link" href="" aria-label="Previous" ng-click="foodPage=(foodPage>0)?foodPage-1:foodPage;getAllFood()">
+                            <span aria-hidden="true">&laquo;</span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href=""  th:text="#{messages.button.first}"
+                                             ng-click="foodPage=0;getAllFood()"></a></li>
+                    <li class="page-item"><a class="page-link" href="" th:text="#{messages.button.last}"
+                                             ng-click="foodPage=foodPageMax;getAllFood()"></a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="" aria-label="Next" ng-click="foodPage=(foodPage<foodPageMax)?foodPage+1:foodPage;getAllFood()">
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
 
         </div>
 

@@ -10,7 +10,6 @@ angular.module("food", [])
         $scope.showAddError = false;
 
         $scope.userStat={};
-        $scope.myRegex = /^[a-zA-Z]{1,45}$/;
 
         $scope.addUserFood = function (userFood) {
             $http({

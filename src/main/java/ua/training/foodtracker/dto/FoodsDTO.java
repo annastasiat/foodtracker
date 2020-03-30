@@ -1,6 +1,7 @@
 package ua.training.foodtracker.dto;
 
 import lombok.*;
+import org.springframework.data.domain.Page;
 import ua.training.foodtracker.entity.Food;
 
 import java.util.List;
@@ -13,5 +14,5 @@ import java.util.List;
 @Builder
 @ToString
 public class FoodsDTO {
-    private List<Food> foods;
+    private Page<Food> foods;
 }

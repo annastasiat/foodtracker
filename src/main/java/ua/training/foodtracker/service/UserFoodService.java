@@ -3,6 +3,8 @@ package ua.training.foodtracker.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,8 +14,13 @@ import ua.training.foodtracker.exception.FoodNotExistsException;
 import ua.training.foodtracker.exception.UserNotExistsException;
 import ua.training.foodtracker.repository.UserFoodRepository;
 
+import org.springframework.data.domain.Pageable;
+
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -48,49 +55,64 @@ public class UserFoodService {
                 .user(user)
                 .food(food)
                 .amount(userMealDto.getAmount())
-                .date(Date.valueOf(LocalDate.now()))
+                .dateTime(LocalDateTime.now())
                 .build());
     }
 
-    public MealsDTO findAllUsersFoodForAdmin() {
-        return MealsDTO.builder().meals(
-                userFoodRepository.findAll()
-                        .stream()
-                        .map(userFood -> MealDTO.builder()
-                                .username(userFood.getUser().getUsername())
-                                .foodName(isLocaleUa() ? userFood.getFood().getNameUa() : userFood.getFood().getName())
-                                .amount(userFood.getAmount())
-                                .date(userFood.getDate())
-                                .build())
-                        .sorted(Comparator.comparing(MealDTO::getDate, Comparator.reverseOrder()))
-                        .collect(Collectors.toList()))
-                .build();
+    public MealsDTO findAllUsersFoodForAdmin(Pageable pageable) {
+
+        Page<UserFood> page = userFoodRepository.findAll(pageable);
+
+        List<MealDTO> meals = page.getContent().stream()
+                .map(userFood -> MealDTO.builder()
+                        .username(userFood.getUser().getUsername())
+                        .foodName(isLocaleUa() ? userFood.getFood().getNameUa() : userFood.getFood().getName())
+                        .amount(userFood.getAmount())
+                        .date(userFood.getDateTime().toLocalDate())
+                        .time(userFood.getDateTime().toLocalTime())
+                        .build())
+                .collect(Collectors.toList());
+
+        return MealsDTO.builder().meals(new PageImpl<>(meals, pageable, page.getTotalElements())).build();
+
     }
 
-    public UsersMealStatDTO findAllTodaysPrincipalStat() {
-        List<UserMealStatDTO> todaysFood = userFoodRepository
-                .findByUser_UsernameAndDate(getPrincipalUsername(), Date.valueOf(LocalDate.now()))
+    public UsersMealStatDTO findAllTodaysPrincipalStat(Pageable pageable) {
+        Page<UserFood> page = userFoodRepository
+                .findByUser_UsernameAndDateTimeBetween(getPrincipalUsername(),
+                        LocalDateTime.of(LocalDate.now(), LocalTime.MIN),
+                        LocalDateTime.of(LocalDate.now(), LocalTime.MAX),
+                        pageable);
+
+        List<UserMealStatDTO> todaysFood = page.getContent()
                 .stream()
                 .map(userFood -> UserMealStatDTO.builder()
                         .amount(userFood.getAmount())
-                        .date(userFood.getDate())
-                        .foodName(isLocaleUa() ? userFood.getFood().getNameUa() : userFood.getFood().getName()).build())
+                        .date(userFood.getDateTime().toLocalDate())
+                        .time(userFood.getDateTime().toLocalTime())
+                        .foodName(isLocaleUa() ? userFood.getFood().getNameUa() : userFood.getFood().getName())
+                        .build())
                 .collect(Collectors.toList());
 
-        return UsersMealStatDTO.builder().usersFood(todaysFood).build();
+        log.info("page findAllTodaysPrincipalStat {}", page);
+        return UsersMealStatDTO.builder().usersFood(new PageImpl<>(todaysFood, pageable, page.getTotalElements())).build();
     }
 
-    public UsersMealStatDTO findAllPrincipalStat() {
-        return UsersMealStatDTO.builder().usersFood(
-                userFoodRepository.findByUser_Username(getPrincipalUsername())
-                        .stream()
-                        .map(userFood -> UserMealStatDTO.builder()
-                                .amount(userFood.getAmount())
-                                .date(userFood.getDate())
-                                .foodName(isLocaleUa() ? userFood.getFood().getNameUa() : userFood.getFood().getName()).build())
-                        .sorted(Comparator.comparing(UserMealStatDTO::getDate, Comparator.reverseOrder()))
-                        .collect(Collectors.toList()))
-                .build();
+    public UsersMealStatDTO findAllPrincipalStat(Pageable pageable) {
+
+        Page<UserFood> page = userFoodRepository.findByUser_Username(getPrincipalUsername(), pageable);
+
+        List<UserMealStatDTO> mealStat = page.getContent().stream()
+                .map(userFood -> UserMealStatDTO.builder()
+                        .amount(userFood.getAmount())
+                        .date(userFood.getDateTime().toLocalDate())
+                        .time(userFood.getDateTime().toLocalTime())
+                        .foodName(isLocaleUa() ? userFood.getFood().getNameUa() : userFood.getFood().getName())
+                        .build()).collect(Collectors.toList());
+
+        log.info("page findAllPrincipalStat {}", page);
+        return UsersMealStatDTO.builder().usersFood(new PageImpl<>(mealStat, pageable, page.getTotalElements())).build();
+
     }
 
     public int countCaloriesNorm() throws UserNotExistsException {
@@ -106,7 +128,9 @@ public class UserFoodService {
 
     private int todaysFoodElement(Function<Food, Integer> foodGetter) {
         return userFoodRepository
-                .findByUser_Username(getPrincipalUsername())
+                .findByUser_UsernameAndDateTimeBetween(getPrincipalUsername(),
+                        LocalDateTime.of(LocalDate.now(), LocalTime.MIN),
+                        LocalDateTime.of(LocalDate.now(), LocalTime.MAX))
                 .stream()
                 .mapToInt(userFood -> foodGetter.apply(userFood.getFood()) * userFood.getAmount() / 100)
                 .reduce(Integer::sum).orElse(0);
