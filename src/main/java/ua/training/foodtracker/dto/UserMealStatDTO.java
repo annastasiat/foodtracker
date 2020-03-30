@@ -15,7 +15,6 @@ import java.time.LocalTime;
 @Builder
 @ToString
 public class UserMealStatDTO {
-
     String foodName;
     Integer amount;
     LocalDate date;

@@ -43,8 +43,7 @@ public class UserController {
     @GetMapping("user")
     public UserDTO user() throws UserNotExistsException {
         UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        log.info("locale {}",LocaleContextHolder.getLocale());
-        return new UserDTO(userService.findByUsername(principal.getUsername()).orElseThrow(UserNotExistsException::new));
+        return userService.getUserDTOByUsername(principal.getUsername());
     }
 
     @GetMapping("todays_food")

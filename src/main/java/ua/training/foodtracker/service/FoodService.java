@@ -28,7 +28,8 @@ public class FoodService {
         }
     }
 
-    @Transactional
+    //TODO
+    //@Transactional
     public Food save(FoodDTO foodDTO) {
         return foodRepository.save(Food.builder()
                 .name(foodDTO.getName())

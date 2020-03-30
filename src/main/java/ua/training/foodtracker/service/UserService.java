@@ -3,6 +3,7 @@ package ua.training.foodtracker.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,10 +12,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ua.training.foodtracker.config.LocaleConfiguration;
 import ua.training.foodtracker.config.SecurityConfiguration;
 import ua.training.foodtracker.dto.UserDTO;
 import ua.training.foodtracker.dto.UsersDTO;
 import ua.training.foodtracker.entity.*;
+import ua.training.foodtracker.exception.UserNotExistsException;
 import ua.training.foodtracker.repository.UserFoodRepository;
 import ua.training.foodtracker.repository.UserRepository;
 
@@ -22,10 +25,7 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -37,9 +37,29 @@ public class UserService {
 
     @Autowired
     private SecurityConfiguration securityConfiguration;
+    @Autowired
+    private LocaleConfiguration localeConfiguration;
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    public UserDTO getUserDTOByUsername(String username) throws UserNotExistsException {
+
+        User user = userRepository.findByUsername(username).orElseThrow(UserNotExistsException::new);
+
+        return UserDTO.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .height(user.getHeight())
+                .weight(user.getWeight())
+                .activityLevel(localeConfiguration.getMessageResource()
+                        .getMessage(user.getActivityLevel(), null, LocaleContextHolder.getLocale()))
+                .age(user.getAge())
+                .firstName(user.getFirstName())
+                .firstNameUa(user.getFirstNameUa())
+                .gender(user.getGender()).build();
+
     }
 
     @Transactional
@@ -67,7 +87,7 @@ public class UserService {
     }
 
     @Transactional
-    public void updatePassword(String newPassword, String username){
+    public void updatePassword(String newPassword, String username) {
         userRepository.updatePassword(securityConfiguration.getPasswordEncoder()
                 .encode(newPassword), username);
     }

@@ -20,8 +20,6 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
@@ -30,6 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class UserFoodService {
+    //TODO aytowired
     @Autowired
     private UserFoodRepository userFoodRepository;
     @Autowired
@@ -44,7 +43,7 @@ public class UserFoodService {
     private boolean isLocaleUa() {
         return LocaleContextHolder.getLocale().equals(new Locale("ua"));
     }
-
+//TODO
     @Transactional
     public UserFood save(UserMealDTO userMealDto) throws FoodNotExistsException, UserNotExistsException {
 
@@ -74,7 +73,6 @@ public class UserFoodService {
                 .collect(Collectors.toList());
 
         return MealsDTO.builder().meals(new PageImpl<>(meals, pageable, page.getTotalElements())).build();
-
     }
 
     public UsersMealStatDTO findAllTodaysPrincipalStat(Pageable pageable) {
@@ -94,7 +92,6 @@ public class UserFoodService {
                         .build())
                 .collect(Collectors.toList());
 
-        log.info("page findAllTodaysPrincipalStat {}", page);
         return UsersMealStatDTO.builder().usersFood(new PageImpl<>(todaysFood, pageable, page.getTotalElements())).build();
     }
 
@@ -108,13 +105,26 @@ public class UserFoodService {
                         .date(userFood.getDateTime().toLocalDate())
                         .time(userFood.getDateTime().toLocalTime())
                         .foodName(isLocaleUa() ? userFood.getFood().getNameUa() : userFood.getFood().getName())
-                        .build()).collect(Collectors.toList());
+                        .build())
+                .collect(Collectors.toList());
 
-        log.info("page findAllPrincipalStat {}", page);
         return UsersMealStatDTO.builder().usersFood(new PageImpl<>(mealStat, pageable, page.getTotalElements())).build();
-
     }
 
+    public UserTodayStatisticsDTO getTodaysPrincipalStatistics() throws UserNotExistsException {
+        return UserTodayStatisticsDTO.builder()
+                .calories(todaysCalories())
+                .carbs(todaysFoodElement(Food::getCarbs))
+                .protein(todaysFoodElement(Food::getProtein))
+                .fat(todaysFoodElement(Food::getFat))
+                .caloriesNorm(countCaloriesNorm())
+                .build();
+    }
+
+    /**
+     * Count daily calories norm for principal with formula
+     */
+    //TODO consts
     public int countCaloriesNorm() throws UserNotExistsException {
         User user = userService.findByUsername(getPrincipalUsername())
                 .orElseThrow(UserNotExistsException::new);
@@ -140,13 +150,4 @@ public class UserFoodService {
         return todaysFoodElement(Food::getCalories);
     }
 
-    public UserTodayStatisticsDTO getTodaysPrincipalStatistics() throws UserNotExistsException {
-        return UserTodayStatisticsDTO.builder()
-                .calories(todaysCalories())
-                .carbs(todaysFoodElement(Food::getCarbs))
-                .protein(todaysFoodElement(Food::getProtein))
-                .fat(todaysFoodElement(Food::getFat))
-                .caloriesNorm(countCaloriesNorm())
-                .build();
-    }
 }

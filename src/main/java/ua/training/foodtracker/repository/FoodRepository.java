@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FoodRepository extends JpaRepository<Food, Long> {
+
     Optional<Food> findByName(String name);
 
     Optional<Food> findByNameUa(String name);

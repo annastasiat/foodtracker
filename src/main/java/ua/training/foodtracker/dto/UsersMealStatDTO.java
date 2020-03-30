@@ -3,7 +3,6 @@ package ua.training.foodtracker.dto;
 import lombok.*;
 import org.springframework.data.domain.PageImpl;
 
-import java.util.List;
 
 @Getter
 @Setter

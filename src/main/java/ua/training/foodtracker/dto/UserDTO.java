@@ -4,7 +4,6 @@ import lombok.*;
 import ua.training.foodtracker.entity.User;
 
 
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -23,7 +22,7 @@ public class UserDTO {
     private String firstNameUa;
     private String gender;
 
-    public UserDTO(User user){
+    public UserDTO(User user) {
         this.username = user.getUsername();
         this.password = user.getPassword();
         this.height = user.getHeight();
@@ -34,8 +33,6 @@ public class UserDTO {
         this.firstNameUa = user.getFirstNameUa();
         this.gender = user.getGender();
     }
-
-
 
 
 }
